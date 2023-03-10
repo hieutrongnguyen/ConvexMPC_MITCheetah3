@@ -33,20 +33,32 @@ for i = 2:horizon
 end
 Aqp = cell2mat(Aqp);
 
-% Compute Bqp
+%% Compute Bqp
 Bqp = repmat({zeros(13, 3*n)}, k, k);
 for i = 1:k
-    Bqp{i, i} = B{i};
-    for p= 1:horizon-1
-        Bqp{i,p}=A_hat^(i-p)*B{p};
+    Bqp{i, i} = B_hat;
+    for j = 1:k-1
+        Bqp{i, j} = A_hat^(i-j)*B_hat;
         
     end
 end
 
-for i=1:horizon-1
-    for index=i+1:horizon
-        Bqp{i,index}=zeros(13,12);
+for i = 1:k-1
+    for j = i+1:k
+        Bqp{i, j} = zeros(13, 12);
     end
 end
+
+Bqp = cell2mat(Bqp);
+
+%% QP Formulation
+x0 = ; y = ;
+L = ; K = ; 
+C = ;
+
+H = 2*(Bqp'*L*Bqp + K);
+g = 2*Bqp'*L*(Aqp*x0 - y);
+
+R = [1, sin(phi)*tan(theta), cos(phi)(
 
 end

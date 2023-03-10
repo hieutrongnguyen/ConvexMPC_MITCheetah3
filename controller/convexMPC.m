@@ -59,6 +59,10 @@ C = ;
 H = 2*(Bqp'*L*Bqp + K);
 g = 2*Bqp'*L*(Aqp*x0 - y);
 
-
+syms psi theta 
+R = [cos(theta)*cos(psi), -sin(psi), 0; ...
+     cos(theta)*sin(psi), cos(psi), 0; ...
+     0, 0, 1];
+ inv(R)
 
 end
