@@ -20,10 +20,6 @@ R = reshape(Xs(10:18), [3, 3]);
 F = reshape(F, [4, 3]);
 pf = reshape(pf, [4, 3]);
 
-syms x1 x2 x3
-x = [x1; x2; x3];
-skew(x)
-
 %% Dynamics model
 %========= Equation (5) =========% 
 g = [0; 0; -9.8];
