@@ -17,12 +17,12 @@ dp = Xs(4:6);
 omega = Xs(7:9);
 R = reshape(Xs(10:18), [3, 3]);
 
-F = reshape(F, [4, 3]);
-pf = reshape(pf, [4, 3]);
+F = reshape(F, [3, 4]);
+pf = reshape(pf, [3, 4]);
 
 %% Dynamics model
 %========= Equation (5) =========% 
-g = [0; 0; -9.8];
+g = [0; 0; 9.8];
 ddp = sum(F, 2)/m - g;
 
 %========= Equation (6) =========% 
