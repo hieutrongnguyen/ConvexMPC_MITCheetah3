@@ -1,5 +1,8 @@
 clear
 clc
+% addpath(genpath('D:\[2] Resarch Resources\[1] Robotics and Control\Prof Park Hae Won\ConvexMPC_MITCheetah\ConvexMPC_MITCheetah\dynamics)'));
+% addpath(genpath('D:\[2] Resarch Resources\[1] Robotics and Control\Prof Park Hae Won\ConvexMPC_MITCheetah\ConvexMPC_MITCheetah\functions)'));
+addpath(genpath(pwd))
 
 gait = 1; % trotting
 
@@ -29,4 +32,6 @@ fp_example = [[-w_body/2; -l_body/2; 0]; ...
               [ w_body/2; -l_body/2; 0]];
 F_example = [[0; 0; 43*9.8/2]; [0; 0; 0]; ...
              [0; 0; 43*9.8/2]; [0; 0; 0]];
+
+fp_0 = fp_example;
 
