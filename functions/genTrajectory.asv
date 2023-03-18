@@ -1,0 +1,3 @@
+function X_desired = genTrajectory(px_dot, py_dot, yaw_dot)
+X_desired = zeros();
+end

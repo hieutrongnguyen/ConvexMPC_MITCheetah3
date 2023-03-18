@@ -1,7 +1,18 @@
-function F = convexMPC(X, X_desired)
+function F = convexMPC(t, X, X_desired)
+% X = [RPY; p; omega; p_dot]
 
+%%
+m = 43;
+Ib = [0.41,   0,    0; ...
+         0, 2.1,    0; ...
+         0,   0, 2.1]; 
+     
+%%
 k = 9;     % prediction horizon
+p = X(4:6);
 psi = X(3);
+n = 4;
+horizon = 10;
 
 %% Compute Ac and A_hat
 Rz = [ cos(psi), sin(psi), 0; ...
@@ -17,9 +28,10 @@ Ac = [zeros(3, 3), zeros(3, 3),          Rz, zeros(3, 3), zeros(3, 1); ...
 A_hat = eye(13) + Ac*delta_t_MPC;
 
 %% Compute Bc and B_hat
+I = Rz*Ib*Rz';
 Bc = zeros(13, 3*n);
 for i = 1:n
-    Bc([7:9], [i:i+2]) = (inv(I)*skewsymMat(r(i)));
+    Bc([7:9], [i:i+2]) = (I\skew(pf - p));
     Bc([10:12], [i:i+2]) = (1/m)*eye(3);
 end
 
