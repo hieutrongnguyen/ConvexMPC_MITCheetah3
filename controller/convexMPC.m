@@ -1,18 +1,18 @@
 function F = convexMPC(t, X, X_desired)
 % X = [RPY; p; omega; p_dot]
+%% Extract variables from input
+p = X(4:6);
+psi = X(3);
 
-%%
+%% Robot parameters
 m = 43;
 Ib = [0.41,   0,    0; ...
          0, 2.1,    0; ...
          0,   0, 2.1]; 
      
-%%
-k = 9;     % prediction horizon
-p = X(4:6);
-psi = X(3);
-n = 4;
-horizon = 10;
+%% Controller parameters
+k = 10;     % prediction horizon
+n = 4;      % number of foots 
 
 %% Compute Ac and A_hat
 Rz = [ cos(psi), sin(psi), 0; ...
@@ -40,7 +40,7 @@ B_hat = Bc*delta_t_MPC;
 %% Compute Aqp
 Aqp = repmat({zeros(13,13)}, k, 1);
 Aqp{1} = A_hat;
-for i = 2:horizon
+for i = 2:k
     Aqp{i} = Aqp{i-1}*A_hat;
 end
 Aqp = cell2mat(Aqp);
