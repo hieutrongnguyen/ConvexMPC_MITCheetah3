@@ -2,6 +2,8 @@ clear
 clc
 addpath(genpath(pwd))
 
+global delta_t_MPC g 
+
 %%
 Tsim = 5;
 global T_gait horizon dt_MPC pf_saved X_saved
@@ -15,6 +17,7 @@ Ib = [0.41,   0,    0; ...
 l_body = 0.6;
 w_body = 0.256;
 h_body = 0.2;
+g = -9.8;
 
 %% User command
 pz_desired = h_body;
