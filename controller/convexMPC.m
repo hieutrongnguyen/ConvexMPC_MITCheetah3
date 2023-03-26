@@ -10,6 +10,7 @@ global robotParams MPCParams
 %% Extract variables from input
 p = X(4:6);
 psi = X(3);
+pf = reshape(pf, [3, 4]);
 
 %% Robot parameters
 m = robotParams.m;
@@ -38,7 +39,7 @@ I = Rz*Ib*Rz';
 Bc = zeros(13, 3*n);
 ...
 for i = 1:n
-    Bc(7:9, i:i+2) = (I\skew(pf - p));     % pf varis with horizion, leading to variation of Bc at each prediction step 
+    Bc(7:9, i:i+2) = (I\skew(pf(:, i) - p));     % pf varis with horizion, leading to variation of Bc at each prediction step 
     Bc(10:12, i:i+2) = (1/m)*eye(3);       % --> compute more ...
 end
 ...
