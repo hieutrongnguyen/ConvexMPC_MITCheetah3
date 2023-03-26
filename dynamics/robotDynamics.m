@@ -5,11 +5,11 @@ function dXs = robotDynamics(Xs, F, pf)
 % pf = [pf1, pf2, pf3, pf4] in which pfi is 3*1 dimensional vector representing
 % location of the foot i expressed in the world frame
 
+global robotParams
+
 %%
-m = 43;
-Ib = [0.41,   0,    0; ...
-         0, 2.1,    0; ...
-         0,   0, 2.1]; 
+m = robotParams.m;
+Ib = robotParams.Ib;
 
 %% Extract variables from input
 p = Xs(1:3);   
@@ -22,8 +22,8 @@ pf = reshape(pf, [3, 4]);
 
 %% Dynamics model
 %========= Equation (5) =========% 
-g = [0; 0; 9.8];
-ddp = sum(F, 2)/m - g;
+g = [0; 0; robotParams.g];
+ddp = sum(F, 2)/m + g;
 
 %========= Equation (6) =========% 
 I = R*Ib*R';

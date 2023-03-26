@@ -36,12 +36,11 @@ A_hat = eye(13) + Ac*dt_MPC;
 %% Compute Bc and B_hat
 I = Rz*Ib*Rz';
 Bc = zeros(13, 3*n);
-...
 for i = 1:n
-    Bc(7:9, i:i+2) = (I\skew(pf - p));     % pf varis with horizion, leading to variation of Bc at each prediction step 
-    Bc(10:12, i:i+2) = (1/m)*eye(3);       % --> compute more ...
+    Bc(7:9, i:i+2) = (I\skew(pf(t) - p));
+    Bc(10:12, i:i+2) = (1/m)*eye(3);
 end
-...
+
 B_hat = Bc*dt_MPC;
 
 %% Compute Aqp
