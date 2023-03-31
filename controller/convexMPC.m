@@ -43,7 +43,8 @@ for i = 1:n
     Bc(10:12, i:i+2) = (1/m)*eye(3);       % --> compute more ...
 end
 ...
-B_hat = Bc*dt_MPC;
+B_hat{1} = Bc*dt_MPC;
+B_hat = func( ... );
 
 %% Compute Aqp
 Aqp = repmat({zeros(13,13)}, k, 1);
@@ -53,28 +54,44 @@ for i = 2:k
 end
 Aqp = cell2mat(Aqp);
 
+
 %% Compute Bqp
 Bqp = repmat({zeros(13, 3*n)}, k, k);
 for i = 1:k
-    Bqp{i, i} = B_hat;
+    Bqp{i, i} = B_hat{i};
     for j = 1:k-1
-        Bqp{i, j} = A_hat^(i-j)*B_hat;
-        
+        Bqp{i, j} = A_hat^(i-j)*B_hat{j};
     end
 end
 
 for i = 1:k-1
     for j = i+1:k
-        Bqp{i, j} = zeros(13, 12);
+        Bqp{i, j} = zeros(13, 3*n);
     end
 end
 
 Bqp = cell2mat(Bqp);
 
 %% QP Formulation
-x0 = ; y = ;
-L = ; K = ; 
-C = ;
+x0 = X; 
+y = X_desired;
+
+alpha = 1e-6;
+RPY_weight = 1*ones(1, 3);
+pz_weight = 50;
+p_weight = [0, 0, pz_weight];
+yaw_dot_weight = 1;
+omega_weight = [0, 0, yaw_dot_weight];
+p_dot_weight = 1*ones(1, 3);
+
+L_temp = diag([RPY_weight p_weight omega_weight p_dot_weight 0]);
+L = L_temp;
+for i = 2:k
+    L = blkdiag(L, L_temp);
+end
+
+K = alpha*eye(3*n*k); 
+C = eqConstraint(gait_info);
 
 H = 2*(Bqp'*L*Bqp + K);
 g = 2*Bqp'*L*(Aqp*x0 - y);
