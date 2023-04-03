@@ -37,12 +37,14 @@ A_hat = eye(13) + Ac*dt_MPC;
 %% Compute Bc and B_hat
 I = Rz*Ib*Rz';
 Bc = zeros(13, 3*n);
+...
 for i = 1:n
     Bc(7:9, i:i+2) = (I\skew(pf(:, i) - p));     % pf varis with horizion, leading to variation of Bc at each prediction step 
     Bc(10:12, i:i+2) = (1/m)*eye(3);       % --> compute more ...
 end
+...
 B_hat{1} = Bc*dt_MPC;
-B_hat = func
+B_hat = func( ... );
 
 %% Compute Aqp
 Aqp = repmat({zeros(13,13)}, k, 1);
@@ -75,10 +77,20 @@ x0 = X;
 y = X_desired;
 
 alpha = MPCParams.alpha;
-RPY_weight = MPCParams.RPY_weight*ones(1, 3);
-p_weight = [0, 0, MPCParams.pz_weight];
-omega_weight = [0, 0, MPCParams.yaw_dot_weight];
-p_dot_weight = MPCParams.p_dot_weight*ones(1, 3);
+RPY_weight = MPCParams.RPY_weight;
+pz_weight = MPCParams.pz_weight;
+p_weight = MPCParams.p_weight;
+yaw_dot_weight = MPCParams.yaw_dot_weight;
+omega_weight = MPCParams.omega_weight;
+p_dot_weight = MPCParams.p_dot_weight;
+
+MPCParams.alpha = 1e-6;
+MPCParams.RPY_weight = 1*ones(1, 3);
+MPCParams.pz_weight = 50;
+MPCParams.p_weight = [0, 0, pz_weight];
+MPCParams.yaw_dot_weight = 1;
+MPCParams.omega_weight = [0, 0, yaw_dot_weight];
+MPCParams.p_dot_weight = 1*ones(1, 3);
 
 f_min = MPCParams.f_min;
 f_max = MPCParams.f_max;

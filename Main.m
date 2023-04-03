@@ -32,6 +32,16 @@ gaitParams.T_gait = gaitParams.numStep*gaitParams.timestepLength;
 gaitParams.T_stance = gaitParams.T_gait/2;
 gaitParams.T_swing = gaitParams.T_gait/2;
 
+%% MPC Controller parameters
+MPCParams.alpha = 1e-6;
+MPCParams.RPY_weight = 1;
+MPCParams.pz_weight = 50;
+MPCParams.yaw_dot_weight = 1;
+MPCParams.p_dot_weight = 1;
+
+MPCParams.f_min = 10;
+MPCParams.f_max = 666;
+MPCParams.mu = 0.6;
 MPCParams.horizon = gaitParams.numStep;
 MPCParams.dt_MPC = gaitParams.T_gait/MPCParams.horizon;
 

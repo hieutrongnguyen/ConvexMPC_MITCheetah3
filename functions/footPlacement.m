@@ -10,7 +10,6 @@ p_dot = X(10:12);
 %%
 w_body = robotParams.w_body;
 l_body = robotParams.l_body;
-h_body = robotParams.h_body;
 
 %%
 numStep = gaitParams.numStep;
@@ -28,18 +27,18 @@ end
 %% Compute desired foot placemants
 if i_global == 1
     % Initilization
-    pf_desired = [-w_body/2;  l_body/2; -k*h_body; ...
-                   w_body/2;  l_body/2; -k*h_body; ...
-                  -w_body/2; -l_body/2; -k*h_body; ...
-                   w_body/2; -l_body/2; -k*h_body];
+    pf_desired = [-w_body/2;  l_body/2; 0; ...
+                   w_body/2;  l_body/2; 0; ...
+                  -w_body/2; -l_body/2; 0; ...
+                   w_body/2; -l_body/2; 0];
 else
     % Trotting Gait
     if mod(i - 1, numStep/2) == 0 && phase == 1
         % Foot 1 and 4 are in contact, compute desired foot placement for
         % foot 2 and 3
         pf_desired(1:3, i) = pf_desired(1:3, i-1); 
-        pf_desired(4:6, i) = p + p_dot*T_stance/2 + [ w_body/2;  l_body/2; -k*h_body];
-        pf_desired(7:9, i) = p + p_dot*T_stance/2 + [-w_body/2; -l_body/2; -k*h_body];
+        pf_desired(4:6, i) = p + p_dot*T_stance/2 + [ w_body/2;  l_body/2; 0];
+        pf_desired(7:9, i) = p + p_dot*T_stance/2 + [-w_body/2; -l_body/2; 0];
         pf_desired(10:12, i) = pf_desired(10:12, i-1);
         for j = i:i - numStep/2 + 1
             pf_desired(:, j) = pf_desired(:, i);
@@ -47,10 +46,10 @@ else
     elseif mod(i - 1, numStep/2) == 0 && phase == 2
         % Foot 2 and 3 are in contact, compute desired foot placement for
         % foot 1 and 4
-        pf_desired(1:3, i) = p + p_dot*T_stance/2 + [-w_body/2;  l_body/2; -k*h_body];
+        pf_desired(1:3, i) = p + p_dot*T_stance/2 + [-w_body/2;  l_body/2; 0];
         pf_desired(4:6, i) = pf_desired(4:6, i);  
         pf_desired(7:9, i) = pf_desired(7:9, i);
-        pf_desired(10:12, i) = p + p_dot*T_stance/2 + [ w_body/2; -l_body/2; -k*h_body];
+        pf_desired(10:12, i) = p + p_dot*T_stance/2 + [ w_body/2; -l_body/2; 0];
         for j = i:i - numStep/2 + 1
             pf_desired(:, j) = pf_desired(:, i);
         end
