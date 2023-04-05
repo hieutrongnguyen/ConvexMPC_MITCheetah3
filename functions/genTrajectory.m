@@ -33,4 +33,7 @@ X_desired(10, :) = px_dot_desired*ones(1, k);
 X_desired(11, :) = py_dot_desired*ones(1, k);
 
 X_desired(13, :) = g*ones(1, k);
+
+X_desired = X_desired(:);
+
 end

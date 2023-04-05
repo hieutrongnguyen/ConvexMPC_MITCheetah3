@@ -7,7 +7,7 @@ function dXs = robotDynamics(Xs, F, pf)
 
 global robotParams
 
-%%
+%% Robot parameters
 m = robotParams.m;
 Ib = robotParams.Ib;
 
@@ -33,7 +33,7 @@ for i = 1:4
     r(:, i) = pf(:, i) - p;
     T(:, i) = skew(r(:, i))*F(:, i); 
 end
-domega = I\(sum(T,2) - skew(omega)*I*omega);
+domega = I\(sum(T, 2) - skew(omega)*I*omega);
 
 %========= Equation (7) =========% 
 dR = skew(omega)*R;

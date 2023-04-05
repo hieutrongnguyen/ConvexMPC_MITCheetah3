@@ -9,7 +9,7 @@ tStart = 0;
 tSim = 5;
 
 %% User command
-pz_desired = h_body;
+pz_desired = 0;
 px_dot_desired = 1;  % desired vx 
 py_dot_desired = 0;  % desired vy 
 yaw_dot_desired = 0;
@@ -60,12 +60,17 @@ RPY0 = [0; 0; 0];
 Xs0 = [p0; dp0; omega0; R0(:)];
 
 %%
-% fp_example = [[-w_body/2; -l_body/2; -h_body]; ...
-%               [-w_body/2;  l_body/2; -h_body]; ...
-%               [ w_body/2;  l_body/2; -h_body]; ...
-%               [ w_body/2; -l_body/2; -h_body]];
-% F_example = [[0; 0; 43*9.8/2]; [0; 0; 0]; ...
-%              [0; 0; 43*9.8/2]; [0; 0; 0]];
+dt_MPC = MPCParams.dt_MPC;
+
+l_body = robotParams.l_body;
+w_body = robotParams.w_body;
+
+fp_example = [[ l_body/2; -w_body/2; 0]; ...
+              [ l_body/2;  w_body/2; 0]; ...
+              [-l_body/2; -w_body/2; 0]; ...
+              [-l_body/2;  w_body/2; 0]];
+F_example = [[0; 0; 43*9.8/2]; [0; 0; 0]; ...
+             [0; 0; 43*9.8/2]; [0; 0; 0]];
 
 fp_0 = fp_example;
 
