@@ -34,6 +34,6 @@ X_desired(11, :) = py_dot_desired*ones(1, k);
 
 X_desired(13, :) = g*ones(1, k);
 
-X_desired = X_desired(:);
+X_desired = reshape(X_desired, [13*k, 1]);
 
 end

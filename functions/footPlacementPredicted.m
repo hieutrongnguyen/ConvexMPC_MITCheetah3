@@ -12,8 +12,8 @@ timestepLength = gaitParams.timestepLength;
 numStep = gaitParams.numStep;
 
 %% Define current time step
-% [i, ~] = timeStep(t, tStart, timestepLength, T_gait);
-% 
+[i, ~] = timeStep(t, tStart, timestepLength, T_gait);
+
 % pf_pre = zeros(12, k);
 % if i == 0
 %     for j = 1:k

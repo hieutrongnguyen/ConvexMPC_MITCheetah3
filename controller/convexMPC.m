@@ -10,7 +10,7 @@ global robotParams MPCParams
 %% Extract variables from input
 p = X(4:6);
 pf = reshape(pf, [3, 4]);
-X_desired = reshape(X_desired, [13, 10]);
+X_desired = reshape(X_desired, [13, MPCParams.horizon]);
 psi_avg = mean(X_desired(3, :));   % Average value of psi during the reference trajectory
 
 %% Robot parameters
@@ -37,23 +37,24 @@ A_hat = eye(13) + Ac*dt_MPC;
 %% Compute Bc and B_hat
 B_hat = cell(k, 1);
 I = Rz*Ib*Rz';
-I = eye(3); m = 1;
-pf = ones(12, 1); p = 2*ones(3, 1);
-Bc = [        zeros(3, 3),         zeros(3, 3),         zeros(3, 3),           zeros(3, 3); ...
-              zeros(3, 3),         zeros(3, 3),         zeros(3, 3),           zeros(3, 3); ...
-      I\skew(pf(1:3) - p), I\skew(pf(4:6) - p), I\skew(pf(7:9) - p), I\skew(pf(10:12) - p); ...
-             (1/m)*eye(3),        (1/m)*eye(3),        (1/m)*eye(3),          (1/m)*eye(3); ...
-              zeros(1, 3),         zeros(1, 3),         zeros(1, 3),           zeros(1, 3)];   % 13*12
+
+Bc = [         zeros(3, 3),          zeros(3, 3),          zeros(3, 3),          zeros(3, 3); ...
+               zeros(3, 3),          zeros(3, 3),          zeros(3, 3),          zeros(3, 3); ...
+      I\skew(pf(:, 1) - p), I\skew(pf(:, 2) - p), I\skew(pf(:, 3) - p), I\skew(pf(:, 4) - p); ...
+              (1/m)*eye(3),         (1/m)*eye(3),         (1/m)*eye(3),         (1/m)*eye(3); ...
+               zeros(1, 3),          zeros(1, 3),          zeros(1, 3),          zeros(1, 3)];   % 13*12
 B_hat{1} = Bc*dt_MPC;
 
 for j = 1:k-1
-    pf_pre = footPlacementPredicted(X, pf, t);                                           
+    pf_pre = footPlacementPredicted(X, pf, t);     
+    pf_pre = reshape(pf_pre, [3, 4]);
     p_des = X_desired(4:6, j+1);
-    Bc = [                  zeros(3, 3),                 zeros(3, 3),                 zeros(3, 3),                   zeros(3, 3); ...
-                            zeros(3, 3),                 zeros(3, 3),                 zeros(3, 3),                   zeros(3, 3); ...
-            I\skew(pf_pre(1:3) - p_des), I\skew(pf_pre(4:6) - p_des), I\skew(pf_pre(7:9) - p_des), I\skew(pf_pre(10:12) - p_des); ...
-                           (1/m)*eye(3),                (1/m)*eye(3),                (1/m)*eye(3),                  (1/m)*eye(3); ...
-                            zeros(1, 3),                 zeros(1, 3),                 zeros(1, 3),                   zeros(1, 3)];
+    
+    Bc = [                   zeros(3, 3),                  zeros(3, 3),                  zeros(3, 3),                  zeros(3, 3); ...
+                             zeros(3, 3),                  zeros(3, 3),                  zeros(3, 3),                  zeros(3, 3); ...
+            I\skew(pf_pre(:, 1) - p_des), I\skew(pf_pre(:, 2) - p_des), I\skew(pf_pre(:, 3) - p_des), I\skew(pf_pre(:, 4) - p_des); ...
+                            (1/m)*eye(3),                 (1/m)*eye(3),                 (1/m)*eye(3),                 (1/m)*eye(3); ...
+                             zeros(1, 3),                  zeros(1, 3),                  zeros(1, 3),                  zeros(1, 3)];
     B_hat{j+1} = Bc*dt_MPC;
 end
 
@@ -84,7 +85,7 @@ Bqp = cell2mat(Bqp);
 
 %% QP Formulation
 x0 = X; 
-y = X_desired;
+y = X_desired(:);
 
 alpha = MPCParams.alpha;
 RPY_weight = MPCParams.RPY_weight*ones(1, 3);
@@ -97,8 +98,10 @@ f_max = MPCParams.f_max;
 mu = MPCParams.mu;
 
 L_temp = diag([RPY_weight p_weight omega_weight p_dot_weight 0]);
+% L_temp = diag([1 1 1   0 0 50   0 0 1   1 1 1 0]);
+L_temp = diag([50 50 50   50 50 250   1 1 1 10 1 1 0]);
 
-% L = blkdiag(L_temp, L_temp, L_temp, L_temp, L_temp, L_temp, L_temp, L_temp, L_temp, L_temp);
+L = L_temp;
 for j = 2:k
     L = blkdiag(L, L_temp);
 end

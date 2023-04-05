@@ -8,12 +8,6 @@ global robotParams MPCParams gaitParams pf_saved X_saved
 tStart = 0;
 tSim = 5;
 
-%% User command
-pz_desired = 0;
-px_dot_desired = 1;  % desired vx 
-py_dot_desired = 0;  % desired vy 
-yaw_dot_desired = 0;
-
 %% Robot parameters
 robotParams.m = 43;
 robotParams.Ib = [0.41,   0,    0; ...
@@ -25,7 +19,7 @@ robotParams.h_body = 0.2;
 robotParams.g = -9.8;
 
 %% Gait parameters
-gaitParams.gait = 1; % trotting
+gaitParams.gait = 1;       % trotting
 gaitParams.timestepLength = 0.05;
 gaitParams.numStep = 10;
 gaitParams.T_gait = gaitParams.numStep*gaitParams.timestepLength;
@@ -46,9 +40,9 @@ MPCParams.horizon = gaitParams.numStep;
 MPCParams.dt_MPC = gaitParams.T_gait/MPCParams.horizon;
 
 %%
-N_saved = tSim/MPCParams.dt_MPC;
-pf_saved = zeros(12, N_saved);    % Each column stores foot postion of 4 legs in the world coordinate
-X_saved = zeros(13, N_saved);     % Each column stores MPC states of 4 legs in the world coordinate
+% N_saved = tSim/MPCParams.dt_MPC;
+% pf_saved = zeros(12, N_saved);    % Each column stores foot postion of 4 legs in the world coordinate
+% X_saved = zeros(13, N_saved);     % Each column stores MPC states of 4 legs in the world coordinate
 
 %% Initialization
 p0 = [0; 0; 0];
@@ -59,19 +53,25 @@ RPY0 = [0; 0; 0];
 
 Xs0 = [p0; dp0; omega0; R0(:)];
 
-%%
-dt_MPC = MPCParams.dt_MPC;
+%% User command
+pz_desired = 3*robotParams.h_body;
+px_dot_desired = 0;  % desired vx 
+py_dot_desired = 0;  % desired vy 
+yaw_dot_desired = 0;
 
-l_body = robotParams.l_body;
-w_body = robotParams.w_body;
+%% Draft
+% dt_MPC = MPCParams.dt_MPC;
+% 
+% l_body = robotParams.l_body;
+% w_body = robotParams.w_body;
 
-fp_example = [[ l_body/2; -w_body/2; 0]; ...
-              [ l_body/2;  w_body/2; 0]; ...
-              [-l_body/2; -w_body/2; 0]; ...
-              [-l_body/2;  w_body/2; 0]];
-F_example = [[0; 0; 43*9.8/2]; [0; 0; 0]; ...
-             [0; 0; 43*9.8/2]; [0; 0; 0]];
-
-fp_0 = fp_example;
+% fp_example = [[ l_body/2; -w_body/2; 0]; ...
+%               [ l_body/2;  w_body/2; 0]; ...
+%               [-l_body/2; -w_body/2; 0]; ...
+%               [-l_body/2;  w_body/2; 0]];
+% F_example = [[0; 0; 43*9.8/2]; [0; 0; 0]; ...
+%              [0; 0; 43*9.8/2]; [0; 0; 0]];
+% 
+% fp_0 = fp_example;
 
 
