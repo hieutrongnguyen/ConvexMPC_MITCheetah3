@@ -17,15 +17,15 @@ g = robotParams.g;
 % X = [RPY; p; omega; p_dot]
 X_desired = zeros(13, k);
 
-X_desired(3, 1) = yaw;             % Current yaw angle
-X_desired(4, 1) = px;              % Current x position
-X_desired(5, 1) = py;              % Current y position  
+X_desired(3, 1) = yaw + yaw_dot_desired*dt_MPC;            % Current yaw angle
+X_desired(4, 1) = px  + px_dot_desired*dt_MPC;              % Current x position
+X_desired(5, 1) = py  + py_dot_desired*dt_MPC;              % Current y position  
 X_desired(6, :) = pz_desired*ones(1, k);  % Desired z position
 
-for i = 1:k-1
-    X_desired(3, i+1) = X_desired(3, i) + yaw_dot_desired*dt_MPC;
-    X_desired(4, i+1) = X_desired(4, i) + px_dot_desired*dt_MPC;
-    X_desired(5, i+1) = X_desired(5, i) + py_dot_desired*dt_MPC;
+for i = 2:k
+    X_desired(3, i) = X_desired(3, i-1) + yaw_dot_desired*dt_MPC;
+    X_desired(4, i) = X_desired(4, i-1) + px_dot_desired*dt_MPC;
+    X_desired(5, i) = X_desired(5, i-1) + py_dot_desired*dt_MPC;
 end
 
 X_desired(9, :) = yaw_dot_desired*ones(1, k);

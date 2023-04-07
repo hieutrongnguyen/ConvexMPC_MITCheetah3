@@ -39,13 +39,9 @@ MPCParams.mu = 0.6;
 MPCParams.horizon = gaitParams.numStep;
 MPCParams.dt_MPC = gaitParams.T_gait/MPCParams.horizon;
 
-%%
-% N_saved = tSim/MPCParams.dt_MPC;
-% pf_saved = zeros(12, N_saved);    % Each column stores foot postion of 4 legs in the world coordinate
-% X_saved = zeros(13, N_saved);     % Each column stores MPC states of 4 legs in the world coordinate
-
 %% Initialization
-p0 = [0; 0; 0];
+% p0 = [0; 0; 0];
+p0 = [0; 0; 0.2];
 dp0 = [0; 0; 0];
 omega0 = [0; 0; 0];
 R0 = eye(3);
@@ -54,10 +50,32 @@ RPY0 = [0; 0; 0];
 Xs0 = [p0; dp0; omega0; R0(:)];
 
 %% User command
-pz_desired = 3*robotParams.h_body;
-px_dot_desired = 0;  % desired vx 
-py_dot_desired = 0;  % desired vy 
-yaw_dot_desired = 0;
+Case = 3;
+
+if Case == 1
+    % COM position control in place
+    pz_desired = 0.4;
+    px_dot_desired = 0.3*robotParams.l_body/tSim;  % desired vx
+    py_dot_desired = 0;                            % desired vy
+    yaw_dot_desired = 0;
+end
+
+d2r = pi/180;
+if Case == 2
+    % Turning control in place
+    pz_desired = p0(3);
+    px_dot_desired = 0;  % desired vx
+    py_dot_desired = 0;                            % desired vy
+    yaw_dot_desired = 40*d2r/tSim;
+end
+
+if Case == 3
+    % Trotting in place
+    pz_desired = p0(3);
+    px_dot_desired = 0;  % desired vx
+    py_dot_desired = 0;                              % desired vy
+    yaw_dot_desired = 0;
+end
 
 %% Draft
 % dt_MPC = MPCParams.dt_MPC;

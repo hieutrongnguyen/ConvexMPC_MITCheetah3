@@ -99,7 +99,7 @@ mu = MPCParams.mu;
 
 L_temp = diag([RPY_weight p_weight omega_weight p_dot_weight 0]);
 % L_temp = diag([1 1 1   0 0 50   0 0 1   1 1 1 0]);
-L_temp = diag([50 50 50   50 50 250   1 1 1 10 1 1 0]);
+% L_temp = diag([50 50 50   50 50 250   1 1 1   10 1 1   0]);
 
 L = L_temp;
 for j = 2:k
@@ -115,6 +115,8 @@ H = 2*(Bqp'*L*Bqp + K);
 g = 2*Bqp'*L*(Aqp*x0 - y);
 
 U = quadprog(H, g, C, c_ieq, D, d_eq);
+% U = quadprog(H, g, C, c_ieq);
+
 F = U(1:12);
 
 end

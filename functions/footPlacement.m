@@ -18,7 +18,7 @@ T_stance = gaitParams.T_stance;
 T_gait = gaitParams.T_gait;
 timestepLength = gaitParams.timestepLength;
 
-[i, i_global] = timeStep(t, tStart, timestepLength, T_gait);
+% [i, i_global] = timeStep(t, tStart, timestepLength, T_gait);
 % if i >= 1 && i <= numStep/2
 %     phase = 1;                                   % Foot 1 and 4 are in contact
 % else
@@ -38,8 +38,8 @@ timestepLength = gaitParams.timestepLength;
 %         % Foot 1 and 4 are in contact, compute desired foot placement for
 %         % foot 2 and 3
 %         pf_desired(1:3, i) = pf_desired(1:3, i-1); 
-%         pf_desired(4:6, i) = p + p_dot*T_stance/2 + R*[ l_body/2;  w_body/2; 0];
-%         pf_desired(7:9, i) = p + p_dot*T_stance/2 + R*[-l_body/2; -w_body/2; 0];
+%         pf_desired(4:6, i) = p + p_dot*T_stance/2 + R*[ l_body/2;  w_body/2; ];
+%         pf_desired(7:9, i) = p + p_dot*T_stance/2 + R*[-l_body/2; -w_body/2; ];
 %         pf_desired(10:12, i) = pf_desired(10:12, i-1);
 %         for j = i:i - numStep/2 + 1
 %             pf_desired(:, j) = pf_desired(:, i);
@@ -47,10 +47,10 @@ timestepLength = gaitParams.timestepLength;
 %     elseif mod(i - 1, numStep/2) == 0 && phase == 2
 %         % Foot 2 and 3 are in contact, compute desired foot placement for
 %         % foot 1 and 4
-%         pf_desired(1:3, i) = p + p_dot*T_stance/2 + R*[ l_body/2; -w_body/2; 0];
+%         pf_desired(1:3, i) = p + p_dot*T_stance/2 + R*[ l_body/2; -w_body/2; ];
 %         pf_desired(4:6, i) = pf_desired(4:6, i);  
 %         pf_desired(7:9, i) = pf_desired(7:9, i);
-%         pf_desired(10:12, i) = p + p_dot*T_stance/2 + R*[-l_body/2;  w_body/2; 0];
+%         pf_desired(10:12, i) = p + p_dot*T_stance/2 + R*[-l_body/2;  w_body/2; ];
 %         for j = i:i - numStep/2 + 1
 %             pf_desired(:, j) = pf_desired(:, i);
 %         end
