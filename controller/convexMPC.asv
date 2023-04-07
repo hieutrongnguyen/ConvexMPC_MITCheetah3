@@ -109,14 +109,14 @@ end
 
 K = alpha*eye(12*k);
 [C, c_ieq] = ieqConstraint(f_min, f_max, mu, t);
-D = eqConstraint(t);
-d_eq = zeros(6*k, 1);
+% D = eqConstraint(t);
+% d_eq = zeros(6*k, 1);
 
 H = 2*(Bqp'*L*Bqp + K);
 g = 2*Bqp'*L*(Aqp*x0 - y);
 
-U = quadprog(H, g, C, c_ieq, D, d_eq);
-% U = quadprog(H, g, C, c_ieq);
+% U = quadprog(H, g, C, c_ieq, D, d_eq);
+U = quadprog(H, g, C, c_ieq);
 
 F = U(1:12);
 

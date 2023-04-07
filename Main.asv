@@ -2,7 +2,7 @@ clear
 clc
 addpath(genpath(pwd))
 
-global tStart robotParams MPCParams gaitParams pf_saved X_saved 
+global robotParams MPCParams gaitParams pf_saved X_saved 
 
 %%
 tStart = 0;
@@ -19,7 +19,7 @@ robotParams.h_body = 0.2;
 robotParams.g = -9.8;
 
 %% Gait parameters
-gaitParams.gait = 1;       % 0 - position/yaw control in place, 1 - trotting
+gaitParams.gait = 1;       % trotting
 gaitParams.timestepLength = 0.05;
 gaitParams.numStep = 10;
 gaitParams.T_gait = gaitParams.numStep*gaitParams.timestepLength;
@@ -40,6 +40,7 @@ MPCParams.horizon = gaitParams.numStep;
 MPCParams.dt_MPC = gaitParams.T_gait/MPCParams.horizon;
 
 %% Initialization
+% p0 = [0; 0; 0];
 p0 = [0; 0; 0.2];
 dp0 = [0; 0; 0];
 omega0 = [0; 0; 0];
@@ -76,20 +77,12 @@ if Case == 3
     yaw_dot_desired = 0;
 end
 
-if Case == 4
-    % Trotting
-    pz_desired = p0(3);
-    px_dot_desired = 1;                              % desired vx
-    py_dot_desired = 0;                              % desired vy
-    yaw_dot_desired = 0;
-end
-
 %% Draft
 % dt_MPC = MPCParams.dt_MPC;
 % 
 % l_body = robotParams.l_body;
 % w_body = robotParams.w_body;
-% 
+
 % fp_example = [[ l_body/2; -w_body/2; 0]; ...
 %               [ l_body/2;  w_body/2; 0]; ...
 %               [-l_body/2; -w_body/2; 0]; ...

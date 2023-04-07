@@ -1,0 +1,29 @@
+function y = fcn2(x)
+global a b tStart gaitParams
+
+numStep = gaitParams.numStep;
+T_stance = gaitParams.T_stance;
+T_gait = gaitParams.T_gait;
+timestepLength = gaitParams.timestepLength;
+
+%%
+b = 1;
+t = x(3);
+y1 = -(x(1) + x(2) + b);
+
+%%
+[i, ~] = timeStep(t, tStart, timestepLength, T_gait);
+
+
+elseif i<=5
+    phase = 1;                                   % Foot 1 and 4 are in contact
+    isContact = [1; 0; 0; 1];
+elseif
+    phase = 2;                                   % Foot 2 and 3 are in contact
+    isContact = [0; 1; 1; 0];
+end
+
+%%
+y = [y1; isContact];
+
+end

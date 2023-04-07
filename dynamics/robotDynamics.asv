@@ -22,9 +22,7 @@ pf = reshape(gait(1:12), [3, 4]);
 c = reshape(gait(13:16), [4, 1]);
 
 %% Define Ground Reaction Forces from only legs which are in contact
-nContact = sum(c==1);     % number of foot in contact
-F = F(:, c==1);
-pf = pf(:, c==1);
+F = F(c==1);
 
 %% Dynamics model
 %========= Equation (5) =========% 
@@ -33,9 +31,9 @@ ddp = sum(F, 2)/m + g;
 
 %========= Equation (6) =========% 
 I = R*Ib*R';
-r = zeros(3, nContact);
-T = zeros(3, nContact);
-for i = 1:nContact
+r = zeros(3, sum());
+T = zeros(3, 4);
+for i = 1:4
     r(:, i) = pf(:, i) - p;
     T(:, i) = skew(r(:, i))*F(:, i); 
 end

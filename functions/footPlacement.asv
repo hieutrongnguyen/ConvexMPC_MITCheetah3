@@ -1,5 +1,5 @@
-function pf = footPlacement(X, t)
-% {FR, FL, BR, BL} - {1, 2, 3, 4}
+function gait = gaitGeneration(X, t)
+% {FR, FL, RR, RL} - {1, 2, 3, 4}
 % pf has the dimension of 12*1
 
 global tStart gaitParams robotParams pf_desired 
@@ -18,12 +18,18 @@ T_stance = gaitParams.T_stance;
 T_gait = gaitParams.T_gait;
 timestepLength = gaitParams.timestepLength;
 
-% [i, i_global] = timeStep(t, tStart, timestepLength, T_gait);
-% if i >= 1 && i <= numStep/2
-%     phase = 1;                                   % Foot 1 and 4 are in contact
-% else
-%     phase = 2;                                   % Foot 2 and 3 are in contact
-% end
+[i, i_global] = timeStep(t, tStart, timestepLength, T_gait);
+
+if i == 0  
+    phase = 2;                                   % Foot 2 and 3 are in contact
+    isContact = [0; 1; 1; 0];                             
+elseif (i >= 1)&&(i <= numStep/2)
+    phase = 1;                                   % Foot 1 and 4 are in contact  
+    isContact = [1; 0; 0; 1]; 
+else
+    phase = 2;                                   % Foot 2 and 3 are in contact
+    isContact = [0; 1; 1; 0]; 
+end
 
 %% Compute desired foot placemants
 % if i_global == 1
@@ -63,5 +69,7 @@ pf = [[ l_body/2; -w_body/2; 0]; ...
       [ l_body/2;  w_body/2; 0]; ...
       [-l_body/2; -w_body/2; 0]; ...
       [-l_body/2;  w_body/2; 0]];
+
+gait = [pf; isContact];
           
 end
