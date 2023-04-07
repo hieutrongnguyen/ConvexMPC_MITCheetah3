@@ -2,7 +2,7 @@ clear
 clc
 addpath(genpath(pwd))
 
-global tStart robotParams MPCParams gaitParams pf_saved X_saved 
+global tStart robotParams MPCParams gaitParams pf_desired
 
 %%
 tStart = 0;
@@ -87,8 +87,8 @@ end
 %% Draft
 % dt_MPC = MPCParams.dt_MPC;
 % 
-% l_body = robotParams.l_body;
-% w_body = robotParams.w_body;
+l_body = robotParams.l_body;
+w_body = robotParams.w_body;
 % 
 % fp_example = [[ l_body/2; -w_body/2; 0]; ...
 %               [ l_body/2;  w_body/2; 0]; ...
@@ -96,7 +96,11 @@ end
 %               [-l_body/2;  w_body/2; 0]];
 % F_example = [[0; 0; 43*9.8/2]; [0; 0; 0]; ...
 %              [0; 0; 43*9.8/2]; [0; 0; 0]];
-% 
-% fp_0 = fp_example;
 
+pf_desired = zeros(12, k);
+
+pf_0 = [[ l_body/2; -w_body/2; 0]; ...
+        [ l_body/2;  w_body/2; 0]; ...
+        [-l_body/2; -w_body/2; 0]; ...
+        [-l_body/2;  w_body/2; 0]];
 
