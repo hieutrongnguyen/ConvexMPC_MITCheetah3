@@ -8,7 +8,6 @@ global tStart robotParams MPCParams gaitParams
 persistent pf_desired
 
 %% Extract variables from input
-phi = X(1); theta = X(2); psi = X(3);
 p = X(4:6);
 p_dot = X(10:12);
 X_desired = reshape(X_desired, [13, MPCParams.horizon]);
@@ -75,10 +74,7 @@ if gaitParams.gait == 3
     % Compute desired foot placemants
     R = rotz(psi_avg);
 %     R = rotz(psi)*roty(theta)*rotx(phi);
-%     R = eye(3);
 
-%     pz_desired = -0.2;
-    
     %% Compute desired foot placemants
     if i_global == 0
         pf_desired = zeros(12, k);
