@@ -7,7 +7,7 @@ T_gait = gaitParams.T_gait;
 timestepLength = gaitParams.timestepLength;
 
 %% Define equality constraints for specific gaits
-if gaitParams.gait == 1
+if gaitParams.gait == 2 || gaitParams.gait == 3
     % Foot 1 and 4 are in contact, foot 2 and 3 are in swing phase
     D1 = [zeros(3),   eye(3), zeros(3), zeros(3); ...
           zeros(3), zeros(3),   eye(3), zeros(3)];

@@ -2,7 +2,7 @@ clear
 clc
 addpath(genpath(pwd))
 
-global tStart robotParams MPCParams gaitParams pf_desired
+global tStart robotParams MPCParams gaitParams 
 
 %%
 tStart = 0;
@@ -19,7 +19,7 @@ robotParams.h_body = 0.2;
 robotParams.g = -9.8;
 
 %% Gait parameters
-gaitParams.gait = 1;       % 0 - position/yaw control in place, 1 - trotting
+gaitParams.gait = 3;       % 0/1 - COM position/yaw control in place, 2/3 - trotting in place/trotting with velocity
 gaitParams.timestepLength = 0.05;
 gaitParams.numStep = 10;
 gaitParams.T_gait = gaitParams.numStep*gaitParams.timestepLength;
@@ -52,17 +52,13 @@ l_body = robotParams.l_body;
 w_body = robotParams.w_body;
 k = MPCParams.horizon;
 
-pf_desired = zeros(12, k);
-
 pf_0 = [[ l_body/2; -w_body/2; 0]; ...
         [ l_body/2;  w_body/2; 0]; ...
         [-l_body/2; -w_body/2; 0]; ...
         [-l_body/2;  w_body/2; 0]];
 
 %% User command
-Case = 3;
-
-if Case == 1
+if gaitParams.gait == 0
     % COM position control in place
     pz_desired = 0.4;
     px_dot_desired = 0.3*robotParams.l_body/tSim;  % desired vx
@@ -71,7 +67,7 @@ if Case == 1
 end
 
 d2r = pi/180;
-if Case == 2
+if gaitParams.gait == 1
     % Turning control in place
     pz_desired = p0(3);
     px_dot_desired = 0;                            % desired vx
@@ -79,7 +75,7 @@ if Case == 2
     yaw_dot_desired = 40*d2r/tSim;
 end
 
-if Case == 3
+if gaitParams.gait == 2
     % Trotting in place
     pz_desired = p0(3);
     px_dot_desired = 0;                              % desired vx
@@ -87,7 +83,7 @@ if Case == 3
     yaw_dot_desired = 0;
 end
 
-if Case == 4
+if gaitParams.gait == 3
     % Trotting
     pz_desired = p0(3);
     px_dot_desired = 1;                              % desired vx

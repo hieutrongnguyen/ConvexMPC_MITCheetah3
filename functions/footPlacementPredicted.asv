@@ -1,0 +1,76 @@
+function pf_predicted = footPlacementPredicted(X, pf, t, pf_desired)
+% pf_pre has the dimension of 12*k in which k is the prediction horizon
+
+global tStart gaitParams MPCParams 
+
+%% Extract variables from input
+p_dot = X(10:12);
+% pf = reshape(pf, [12, 1]);
+
+%% Controller parameters
+k = MPCParams.horizon;   
+
+%% Gait parameters
+T_gait = gaitParams.T_gait;
+timestepLength = gaitParams.timestepLength;
+k = gaitParams.numStep;
+
+%% Define current time step
+[i, ~] = timeStep(t, tStart, timestepLength, T_gait);
+
+if i_global == 0
+    % Initilization
+    pf_predicted = zeros(12, k);
+end
+
+if i == 0
+    for j = 1:k/2        % Phase 1
+        pf_predicted(:, j) = pf_desired(:, j);
+    end
+    for j = k/2:k        % Phase 2
+        pf_predicted(:, j) = pf_desired(:, j) + 0.5*[T_gait*p_dot; T_gait*p_dot; T_gait*p_dot; T_gait*p_dot];
+    end
+    
+elseif i>0 && i<k/2  
+    for j = 1:k/2-i      % Phase 1
+        pf_predicted(:, j) = pf_desired(:, i+j);
+    end
+    for j = k/2-i+1:k-i  % Phase 2
+        pf_predicted(:, j) = pf_desired(:, i+j) + 0.5*[T_gait*p_dot; T_gait*p_dot; T_gait*p_dot; T_gait*p_dot];
+    end
+    for j = k-i+1:k      % Phase 1
+        pf_predicted(:, j) = pf_desired(:, i) + 0.5*[T_gait*p_dot; T_gait*p_dot; T_gait*p_dot; T_gait*p_dot];
+    end
+    
+elseif i == k/2
+    for j = 1:k/2
+        pf_predicted(:, j) = pf_desired(:, k/2+j);
+    end
+    for j = k/2+1:k
+        pf_predicted(:, j) = pf_desired(:, j-k/2) + 0.5*[T_gait*p_dot; T_gait*p_dot; T_gait*p_dot; T_gait*p_dot];
+    end
+    
+elseif i>k/2 && i<k  
+    for j = 1:k-i
+        pf_predicted(:, j) = pf_desired(:, i+j);
+    end
+    for j = k-i+1:1.5*k-i
+        pf_predicted(:, j) = pf_desired(:, i+j-k) + 0.5*[T_gait*p_dot; T_gait*p_dot; T_gait*p_dot; T_gait*p_dot];
+    end
+    for j = 1.5*k-i+1:k
+        pf_predicted(:, j) = pf_desired(:, i+j-k) + 0.5*[T_gait*p_dot; T_gait*p_dot; T_gait*p_dot; T_gait*p_dot];
+    end
+end
+
+for j = 1:k
+    if i+j < k/2
+        pf_predicted(:, j) = 
+    end
+    
+end
+
+end
+
+% pf_pre = pf;
+
+end

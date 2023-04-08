@@ -5,11 +5,12 @@ function F = convexMPC(X, gait, t, X_desired)
 % pf is the output of the function Foot placement, has the dimension of
 % 12*1
 
-global robotParams MPCParams 
+global robotParams MPCParams gaitParams
 
 %% Extract variables from input
 p = X(4:6);
 pf = reshape(gait(1:12), [3, 4]);
+pf_desired = reshape(gait(17:16+12*MPCParams.horizon), [12*MPCParams.horizon, 1]);
 
 X_desired = reshape(X_desired, [13, MPCParams.horizon]);
 psi_avg = mean(X_desired(3, :));   % Average value of psi during the reference trajectory
@@ -48,8 +49,10 @@ B_hat{1} = Bc*dt_MPC;
 
 for j = 1:k-1
     pf = reshape(pf, [12, 1]);
-    pf_pre = footPlacementPredicted(X, pf, t);                                                 % 12*k
+    pf_pre = footPlacementPredicted(X, t, pf_desired);                                         % 12*k
     pf_pre_j = reshape(pf_pre(:, j+1), [3, 4]);                                                % 12*1 --> 3*4
+%     pf_pre_j = reshape(pf_pre(:, j+1), [3, 4]);                                                % 12*1 --> 3*4
+
     p_des = X_desired(4:6, j+1);
     
     Bc = [                     zeros(3, 3),                    zeros(3, 3),                    zeros(3, 3),                    zeros(3, 3); ...
@@ -110,14 +113,19 @@ end
 
 K = alpha*eye(12*k);
 [C, c_ieq] = ieqConstraint(f_min, f_max, mu, t);
-D = eqConstraint(t);
-d_eq = zeros(6*k, 1);
 
 H = 2*(Bqp'*L*Bqp + K);
 g = 2*Bqp'*L*(Aqp*x0 - y);
 
-U = quadprog(H, g, C, c_ieq, D, d_eq);
-% U = quadprog(H, g, C, c_ieq);
+if gaitParams.gait == 0 || gaitParams.gait == 1
+    U = quadprog(H, g, C, c_ieq);
+end
+
+if gaitParams.gait == 2 || gaitParams.gait == 3
+    D = eqConstraint(t);
+    d_eq = zeros(6*k, 1);
+    U = quadprog(H, g, C, c_ieq, D, d_eq);
+end
 
 F = U(1:12);
 

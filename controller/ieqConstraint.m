@@ -24,7 +24,7 @@ Ci = [1, 0, -mu; ...
 c_bari = [0; 0; 0; 0; f_max; -f_min];
 
 %% Define inequality in the QP formulation according to gaits
-if gaitParams.gait == 0
+if gaitParams.gait == 0 || gaitParams.gait == 1
     C_temp = blkdiag(Ci, Ci, Ci, Ci);    % 4 legs are in contact
     c_bar_temp = [c_bari; c_bari; c_bari; c_bari];
     
@@ -37,7 +37,7 @@ if gaitParams.gait == 0
     end
 end
     
-if gaitParams.gait == 1
+if gaitParams.gait == 2 || gaitParams.gait == 3
     % Foot 1 and 4 are in contact, foot 2 and 3 are in swing phase
     C1 = [         Ci, zeros(6, 3), zeros(6, 3), zeros(6, 3); ...
           zeros(6, 3), zeros(6, 3), zeros(6, 3),          Ci];
