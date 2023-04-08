@@ -8,10 +8,6 @@ p_dot = X(10:12);
 pf_desired = reshape(pf_desired, [12, MPCParams.horizon]);
 % pf = reshape(pf, [12, 1]);
 
-%% Robot parameters
-w_body = robotParams.w_body;
-l_body = robotParams.l_body;
-
 %% Controller parameters
 k = MPCParams.horizon;   
 

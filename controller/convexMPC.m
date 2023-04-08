@@ -26,7 +26,7 @@ dt_MPC = MPCParams.dt_MPC;
 %% Compute Ac and A_hat
 Rz = [ cos(psi_avg), sin(psi_avg), 0; ...
       -sin(psi_avg), cos(psi_avg), 0; ...
-                  0,            0, 1];
+                  0,            0, 1]; 
           
 Ac = [zeros(3, 3), zeros(3, 3),          Rz, zeros(3, 3), zeros(3, 1); ...
       zeros(3, 3), zeros(3, 3), zeros(3, 3),      eye(3), zeros(3, 1); ...
@@ -103,8 +103,6 @@ f_max = MPCParams.f_max;
 mu = MPCParams.mu;
 
 L_temp = diag([RPY_weight p_weight omega_weight p_dot_weight 0]);
-% L_temp = diag([1 1 1   0 0 50   0 0 1   1 1 1 0]);
-% L_temp = diag([50 50 50   50 50 250   1 1 1   10 1 1   0]);
 
 L = L_temp;
 for j = 2:k
