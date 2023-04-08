@@ -1,11 +1,11 @@
 function pf_pre = footPlacementPredicted(X, pf, t)
 % pf_pre has the dimension of 12*k in which k is the prediction horizon
 
-global tStart gaitParams MPCParams 
+global tStart gaitParams MPCParams pf_desired
 
 %% Extract variables from input
 p_dot = X(10:12);
-pf = reshape(pf, [12, 1]);
+% pf = reshape(pf, [12, 1]);
 
 %% Controller parameters
 k = MPCParams.horizon;   
@@ -21,14 +21,14 @@ numStep = gaitParams.numStep;
 pf_pre = zeros(12, k);
 if i == 0
     for j = 1:k
-        pf_pre(:, j) = pf + [T_gait*p_dot; T_gait*p_dot; T_gait*p_dot; T_gait*p_dot];
+        pf_pre(:, j) = pf_desired(:, i) + [T_gait*p_dot; T_gait*p_dot; T_gait*p_dot; T_gait*p_dot];
     end
 else
     for j = 1:k
-        if i + j < numStep
-            pf_pre(:, j) = pf;
+        if i + j <= numStep
+            pf_pre(:, j) = pf_desired(:, i+j);
         else
-            pf_pre(:, j) = pf + [T_gait*p_dot; T_gait*p_dot; T_gait*p_dot; T_gait*p_dot];
+            pf_pre(:, j) = pf_desired(:, i) + [T_gait*p_dot; T_gait*p_dot; T_gait*p_dot; T_gait*p_dot];
         end
     end
 end

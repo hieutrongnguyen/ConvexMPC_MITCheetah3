@@ -1,8 +1,9 @@
-function gait = gaitGeneration(X, t, X_desired)
+function gait = gaitGeneration(X, t, X_desired, pf_p)
 % {FR, FL, RR, RL} - {1, 2, 3, 4}
 % pf has the dimension of 12*1
 
 global tStart robotParams MPCParams gaitParams 
+persistent pf_desired
 
 %% Extract variables from input
 p = X(4:6);
@@ -34,17 +35,16 @@ if gaitParams.gait == 0
           [ l_body/2;  w_body/2; 0]; ...
           [-l_body/2; -w_body/2; 0]; ...
           [-l_body/2;  w_body/2; 0]];
+%     pf_desired = zeros(12, k);
 end
 
 %% Trotting      
 if gaitParams.gait == 1
     % Trotting Gait
-    if (i >= 1) && (i <= numStep/2)
-        phase = 1;                                   % Foot 1 and 4 are in contact
-        isContact = [1; 0; 0; 1];
-    else
-        phase = 2;                                   % Foot 2 and 3 are in contact
-        isContact = [0; 1; 1; 0];
+    if (i >= 1) && (i <= numStep/2)                                
+        isContact = [1; 0; 0; 1];     % Phase 1: Foot 1 and 4 are in contact
+    else                              
+        isContact = [0; 1; 1; 0];     % Phase 2: Foot 2 and 3 are in contact
     end
     
     % Compute desired foot placemants
@@ -56,30 +56,31 @@ if gaitParams.gait == 1
     if i_global == 0
         % Initilization
         pf = [[ l_body/2; -w_body/2; 0]; ...
-            [ l_body/2;  w_body/2; 0]; ...
-            [-l_body/2; -w_body/2; 0]; ...
-            [-l_body/2;  w_body/2; 0]];
+              [ l_body/2;  w_body/2; 0]; ...
+              [-l_body/2; -w_body/2; 0]; ...
+              [-l_body/2;  w_body/2; 0]];
+        pf_desired = zeros(12, k);
     else
-        
+%         pf = zeros(12, 1);
         % Trotting Gait
-        if mod(i - 1, numStep/2) == 0 && phase == 1
-            % Foot 1 and 4 are in contact, compute desired foot placement for
-            % foot 2 and 3
-            pf_desired(1:3, i) = pf_desired(1:3, i-1);
-            pf_desired(4:6, i) = p + p_dot*T_stance/2 + Rz*[ l_body/2;  w_body/2; -pz_desired];
-            pf_desired(7:9, i) = p + p_dot*T_stance/2 + Rz*[-l_body/2; -w_body/2; -pz_desired];
-            pf_desired(10:12, i) = pf_desired(10:12, i-1);
-            for j = i:i - numStep/2 + 1
-                pf_desired(:, j) = pf_desired(:, i);
+        if i == 0
+            % Phase 1: Foot 1 and 4 are in contact, compute 
+            % desired foot placement for foot 2 and 3
+            pf_desired(1:3, i+1)   = pf_p(1:3);
+            pf_desired(4:6, i+1)   = p + p_dot*T_stance/2 + Rz*[ l_body/2;  w_body/2; -pz_desired];
+            pf_desired(7:9, i+1)   = p + p_dot*T_stance/2 + Rz*[-l_body/2; -w_body/2; -pz_desired];
+            pf_desired(10:12, i+1) = pf_p(10:12);
+            for j = i+2 : i + numStep/2  
+                pf_desired(:, j) = pf_desired(:, i+1);
             end
-        elseif mod(i - 1, numStep/2) == 0 && phase == 2
-            % Foot 2 and 3 are in contact, compute desired foot placement for
-            % foot 1 and 4
-            pf_desired(1:3, i) = p + p_dot*T_stance/2 + Rz*[ l_body/2; -w_body/2; -pz_desired];
-            pf_desired(4:6, i) = pf_desired(4:6, i);
-            pf_desired(7:9, i) = pf_desired(7:9, i);
-            pf_desired(10:12, i) = p + p_dot*T_stance/2 + Rz*[-l_body/2;  w_body/2; -pz_desired];
-            for j = i:i - numStep/2 + 1
+        elseif i == numStep/2 
+            % Phase 2: Foot 2 and 3 are in contact, compute 
+            % desired foot placement for foot 1 and 4
+            pf_desired(1:3, i+1) = p + p_dot*T_stance/2 + Rz*[ l_body/2; -w_body/2; -pz_desired];
+            pf_desired(4:6, i+1) = pf_desired(4:6, i);
+            pf_desired(7:9, i+1) = pf_desired(7:9, i);
+            pf_desired(10:12, i+1) = p + p_dot*T_stance/2 + Rz*[-l_body/2;  w_body/2; -pz_desired];
+            for j = i+2 : i + numStep/2 
                 pf_desired(:, j) = pf_desired(:, i);
             end
         end
@@ -94,6 +95,6 @@ if gaitParams.gait == 1
 end
 
 %% Define output
-gait = [pf; pf_desired; isContact];
+gait = [pf; isContact];
 
 end

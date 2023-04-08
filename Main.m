@@ -48,6 +48,17 @@ RPY0 = [0; 0; 0];
 
 Xs0 = [p0; dp0; omega0; R0(:)];
 
+l_body = robotParams.l_body;
+w_body = robotParams.w_body;
+k = MPCParams.horizon;
+
+pf_desired = zeros(12, k);
+
+pf_0 = [[ l_body/2; -w_body/2; 0]; ...
+        [ l_body/2;  w_body/2; 0]; ...
+        [-l_body/2; -w_body/2; 0]; ...
+        [-l_body/2;  w_body/2; 0]];
+
 %% User command
 Case = 3;
 
@@ -85,22 +96,9 @@ if Case == 4
 end
 
 %% Draft
-% dt_MPC = MPCParams.dt_MPC;
-% 
-l_body = robotParams.l_body;
-w_body = robotParams.w_body;
-% 
 % fp_example = [[ l_body/2; -w_body/2; 0]; ...
 %               [ l_body/2;  w_body/2; 0]; ...
 %               [-l_body/2; -w_body/2; 0]; ...
 %               [-l_body/2;  w_body/2; 0]];
 % F_example = [[0; 0; 43*9.8/2]; [0; 0; 0]; ...
 %              [0; 0; 43*9.8/2]; [0; 0; 0]];
-
-pf_desired = zeros(12, k);
-
-pf_0 = [[ l_body/2; -w_body/2; 0]; ...
-        [ l_body/2;  w_body/2; 0]; ...
-        [-l_body/2; -w_body/2; 0]; ...
-        [-l_body/2;  w_body/2; 0]];
-
